@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://mrobinson102.github.io/toys-before-bed/sitemap.xml
+Sitemap: https://toysbeforebed.com/sitemap.xml
