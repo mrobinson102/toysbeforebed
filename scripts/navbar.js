@@ -7,20 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const depth = relative.split("/").length - 1;
   const prefix = depth > 0 ? "../".repeat(depth) : "";
 
-  fetch(prefix + "footer.html")
+  fetch(prefix + "navbar.html")
     .then(res => res.text())
     .then(html => {
-      const container = document.getElementById("footer-container");
+      const container = document.getElementById("navbar-container");
       if (container) {
         container.innerHTML = html;
-        const dateEl = document.getElementById("last-updated");
-        if (dateEl) {
-          dateEl.textContent = new Date(document.lastModified).toLocaleDateString(undefined, {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          });
-        }
         container.querySelectorAll("a").forEach(a => {
           const href = a.getAttribute("href");
           if (href && !href.startsWith("http") && !href.startsWith("#")) {
@@ -29,5 +21,5 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     })
-    .catch(err => console.error("Footer load error:", err));
+    .catch(err => console.error("Navbar load error:", err));
 });
