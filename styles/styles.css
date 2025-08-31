@@ -26,3 +26,40 @@ nav a:hover{color:#ffd9a0;}
 .footer-hero-strip{background:#7c0e0c;color:#fdf6f2;text-align:center;padding:12px 0;font-size:18px;font-weight:500;letter-spacing:0.5px;border-top:2px solid #ffd9a0;}
 .site-footer{background:#333;color:#fff;text-align:center;padding:20px;font-size:14px;}
 @media(max-width:768px){.hero{height:50vh;background-attachment:scroll;}.hero-content h1{font-size:1.8rem;}.hero-content p{font-size:1rem;}.hero-content a{padding:12px 20px;font-size:0.9rem;}}
+/* Reset list styles */
+.navbar ul,
+.navbar li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Horizontal nav */
+.navbar {
+  background-color: #7c0e0c;
+  padding: 0.75rem 0;
+  text-align: center;
+}
+
+.navbar .nav-list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.navbar .nav-list li {
+  display: inline-block;
+}
+
+.navbar .nav-list a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.navbar .nav-list a:hover {
+  color: #f4d03f; /* gold */
+}
