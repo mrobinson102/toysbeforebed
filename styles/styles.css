@@ -217,3 +217,29 @@ nav a:hover {
 .navbar .nav-list a:hover {
   color: #f4d03f; /* gold */
 }
+
+/* --- NAVBAR FIX: force horizontal layout --- */
+.navbar ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.navbar li {
+  display: inline-block;
+}
+
+.navbar a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.navbar a:hover {
+  color: #f4d03f; /* gold hover */
+}
