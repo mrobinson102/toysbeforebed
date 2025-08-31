@@ -1,26 +1,16 @@
-// Dynamically load shared HTML includes
-function loadInclude(id, file) {
-  fetch(file)
-    .then(response => {
-      if (!response.ok) throw new Error("Failed to fetch " + file);
-      return response.text();
-    })
-    .then(data => {
-      document.getElementById(id).innerHTML = data;
-    })
-    .catch(err => console.error("Include error:", err));
+function getPath(levels) {
+  return Array(levels).fill("..").join("/") || ".";
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Navbar loader
-  const navbar = document.getElementById("navbar");
-  if (navbar) {
-    loadInclude("navbar", "/includes/navbar.html");
-  }
+const depth = window.location.pathname.split("/").length - 2;
+const basePath = getPath(depth);
 
-  // Footer loader
-  const footer = document.getElementById("footer");
-  if (footer) {
-    loadInclude("footer", "/includes/footer.html");
-  }
+document.addEventListener("DOMContentLoaded", () => {
+  fetch(`${basePath}/includes/navbar.html`)
+    .then(res => res.text())
+    .then(data => document.getElementById("navbar-include").innerHTML = data);
+
+  fetch(`${basePath}/includes/footer.html`)
+    .then(res => res.text())
+    .then(data => document.getElementById("footer-include").innerHTML = data);
 });
