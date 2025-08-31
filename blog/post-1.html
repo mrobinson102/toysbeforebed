@@ -43,39 +43,66 @@
       <p style="font-size:1.1rem;line-height:1.6;">Exploring how creating the right atmosphere can transform intimate experiences, from lighting to linens. Full article content coming soon. Stay tuned for more insights and stories that bring comfort, inclusivity, and confidence to your nights.</p>
     </article>
 
-    <aside style="flex:1 1 30%;min-width:250px;">
-      <div class="card">
-        <h3>Recent Posts</h3>
-        <ul style="list-style:none;padding:0;">
-<li><a href="post-2.html" style="color:#7c0e0c;">Designing Intimacy: Gender‑Neutral Comfort</a></li><li><a href="post-3.html" style="color:#7c0e0c;">Discretion & Delight: Shipping You Can Trust</a></li></ul>
-      </div>
-      <div class="card">
-        <h3>Categories</h3>
-        <ul style="list-style:none;padding:0;">
-          <li>Confidence</li>
-          <li>Design & Comfort</li>
-          <li>Trust & Privacy</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>Newsletter Signup</h3>
-        <form action="https://formspree.io/f/your-form-id" method="POST">
-          <label for="email">Subscribe for updates:</label><br>
-          <input type="email" id="email" name="email" placeholder="Your email" required style="margin:10px 0;padding:10px;width:90%;"><br>
-          <input type="hidden" name="_redirect" value="../thank-you.html">
-          <button type="submit" class="btn-primary">Subscribe</button>
-        </form>
-      </div>
-    </aside>
-  </main>
+ <aside style="flex:1 1 30%;min-width:250px;">
+  <div class="card">
+    <h3>Recent Posts</h3>
+    <ul class="recent-posts">
+      <li><a href="post-1.html">Confidence After Dark: The Art of Relaxation</a></li>
+      <li><a href="post-2.html">Designing Intimacy: Gender-Neutral Comfort</a></li>
+      <li><a href="post-3.html">Discretion & Delight: Shipping You Can Trust</a></li>
+    </ul>
+  </div>
 
-  <div class="footer-hero-strip">
-    <p>Discreet Shipping • Inclusive Designs • 100% Comfort Guarantee</p>
+  <div class="card">
+    <h3>Categories</h3>
+    <ul style="list-style:none;padding:0;">
+      <li>Confidence</li>
+      <li>Design & Comfort</li>
+      <li>Trust & Privacy</li>
+    </ul>
   </div>
-  <div class="site-footer">
-    <div class="legal">© 2025 Toys Before Bed™ — Curated for all bodies, every night.<br>
-      Last updated: {today.strftime("%B %d, %Y")}.
+
+  <div class="card">
+    <h3>Newsletter Signup</h3>
+    <form action="https://formspree.io/f/your-form-id" method="POST">
+      <label for="email">Subscribe for updates:</label><br>
+      <input type="email" id="email" name="email" placeholder="Your email" required>
+      <input type="hidden" name="_redirect" value="../thank-you.html">
+      <button type="submit" class="btn-primary">Subscribe</button>
+    </form>
+  </div>
+</aside>
+</main>
+<!-- Footer -->
+ <div class="footer-hero-strip">
+      <p>Discreet Shipping • Inclusive Designs • 100% Comfort Guarantee</p>
     </div>
+ <footer class="footer">
+  <div class="footer-links">
+    <a href="faq.html">FAQ</a>
+    <a href="contact.html">Contact</a>
+    <a href="privacy.html">Privacy (US)</a>
+    <a href="privacy-uk.html">Privacy (UK)</a>
+    <a href="terms.html">Terms</a>
+    <a href="returns.html">Returns</a>
+    <a href="2257.html">2257 Compliance</a>
+    <a href="sitemap.html">Sitemap</a>
   </div>
+  <p>© 2025 Toys Before Bed™ — Confidence After Dark. Comfort All Night.</p>
+  <p><a href="#top" class="back-to-top">↑ Back to Top</a></p>
+</footer>
+
+<div class="footer-hero-strip">
+  <p>Discreet Shipping • Inclusive Designs • 100% Comfort Guarantee</p>
+</div>
+
+<script>
+  // Auto-insert "Last updated" date from file
+  document.getElementById("last-updated").textContent =
+    new Date(document.lastModified).toLocaleDateString(undefined, {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+</script>
+
 </body>
 </html>
