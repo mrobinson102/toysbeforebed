@@ -1,0 +1,28 @@
+body{font-family:'Crimson Text',serif;margin:0;padding:0;background:#fdf6f2;color:#333;}
+nav{display:flex;justify-content:space-between;align-items:center;background:#7c0e0c;padding:1rem 2rem;}
+nav a{color:#fff;text-decoration:none;margin:0 1rem;font-size:1.1rem;font-weight:600;}
+nav a:hover{color:#ffd9a0;}
+
+.hero{position:relative;width:100%;height:70vh;min-height:400px;overflow:hidden;background-attachment:fixed;background-size:cover;background-position:center;}
+.hero img{width:100%;height:100%;object-fit:cover;animation:zoomPan 20s ease-out forwards;transform-origin:center;}
+.hero-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.35);}
+.hero-content{position:absolute;top:50%;left:50%;transform:translate(-50%,-40%);text-align:center;color:#fff;max-width:900px;padding:0 15px;opacity:0;animation:fadeSlideUp 1.5s ease-out forwards;}
+.hero-content h1{font-size:2.8rem;font-weight:700;margin-bottom:1rem;}
+.hero-content p{font-size:1.2rem;margin-bottom:2rem;}
+.hero-content a{display:inline-block;padding:14px 28px;border-radius:6px;font-weight:600;text-decoration:none;margin:5px;opacity:0;transform:translateY(20px);animation:fadeUp 1.2s ease-out forwards;}
+.hero-content a:first-of-type{animation-delay:1.5s;}
+.hero-content a:last-of-type{animation-delay:1.8s;}
+.btn-primary{background:#7c0e0c;color:#fff;}
+.btn-secondary{background:#fff;color:#7c0c0c;}
+@keyframes fadeSlideUp{to{opacity:1;transform:translate(-50%,-50%);}}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+@keyframes zoomPan{from{transform:scale(1);}to{transform:scale(1.1) translateY(-20px);}}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;padding:20px;}
+.card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 4px 8px rgba(0,0,0,0.1);text-align:center;}
+.card img{width:100%;aspect-ratio:1/1;border-radius:8px;object-fit:cover;transition:transform 0.3s;}
+.card img:hover{transform:scale(1.05);}
+.promo-strip{background:#ffd9a0;text-align:center;padding:10px;font-weight:bold;}
+.footer-hero-strip{background:#7c0e0c;color:#fdf6f2;text-align:center;padding:12px 0;font-size:18px;font-weight:500;letter-spacing:0.5px;border-top:2px solid #ffd9a0;}
+.site-footer{background:#333;color:#fff;text-align:center;padding:20px;font-size:14px;}
+@media(max-width:768px){.hero{height:50vh;background-attachment:scroll;}.hero-content h1{font-size:1.8rem;}.hero-content p{font-size:1rem;}.hero-content a{padding:12px 20px;font-size:0.9rem;}}
