@@ -34,20 +34,7 @@
 </head>
 
 <body id="top">
-  <header>
-    <nav class="navbar">
-      <ul class="nav-list">
-        <li><a href="../index.html" aria-label="Home">Home</a></li>
-        <li><a href="../about.html" aria-label="About">About</a></li>
-        <li><a href="../join.html" aria-label="Join Us">Join Us</a></li>
-        <li><a href="../faq.html" aria-label="FAQ">FAQ</a></li> <!-- only if blog is inside /bedside -->
-        <li><a href="../contact.html" aria-label="Contact">Contact</a></li>
-        <li><a href="../privacy.html" aria-label="Privacy (US)">Privacy</a></li>
-        <li><a href="../terms.html" aria-label="Terms">Terms</a></li>
-      </ul>
-    </nav>
-  </header>
-
+    <div id="navbar"></div>
   <main class="page">
     <div class="container">
       <h1>Bedside Reading</h1>
@@ -74,31 +61,13 @@
     </div>
   </main>
 
-  <footer class="footer">
-    <div class="footer-links">
-      <a href="../faq.html">FAQ</a> | 
-      <a href="../contact.html">Contact</a> | 
-      <a href="../privacy.html">Privacy (US)</a> | 
-      <a href="../privacy-uk.html">Privacy (UK)</a> | 
-      <a href="../terms.html">Terms</a> | 
-      <a href="../returns.html">Returns</a> | 
-      <a href="../2257.html">2257 Compliance</a> | 
-      <a href="../sitemap.html">Sitemap</a>
-    </div>
-    <p>© 2025 Toys Before Bed™ — Confidence After Dark. Comfort All Night.</p>
-    <p>Last updated: <span id="last-updated"></span></p>
-    <a href="#top" class="back-to-top-btn" aria-label="Back to top">↑</a>
-  </footer>
-
-  <div class="footer-hero-strip">
-    <p>Discreet Shipping • Inclusive Designs • 100% Comfort Guarantee</p>
-  </div>
-
   <script src="../chat.js"></script>
   <script>
     // Auto-update footer date
     document.getElementById("last-updated").textContent =
       new Date(document.lastModified).toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' });
   </script>
-</body>
+    <div id="footer"></div>
+    <script src="scripts/include.js" defer></script>
+  </body>
 </html>
