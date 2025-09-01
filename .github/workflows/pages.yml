@@ -1,35 +1,35 @@
-name: pages build and deployment
+name: Deploy static content to Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
+
   workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
       - name: Setup Pages
         uses: actions/configure-pages@v3
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: './'   # 👈 keep this root since your site is in root
-
+          path: '.'   # 👈 Root folder, since your HTML is at repo root
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
