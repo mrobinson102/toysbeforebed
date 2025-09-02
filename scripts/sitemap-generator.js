@@ -23,11 +23,17 @@ function getHtmlFiles(dir) {
 
 const htmlFiles = getHtmlFiles(rootDir).sort();
 
+const noBreadcrumbs = ['sitemap.html', 'thank-you.html'];
+
 const listItems = htmlFiles
   .map(file => {
     const urlPath = '/' + file.replace(/\\/g, '/');
     const url = BASE_URL + urlPath;
-    return `      <li><a href="${url}">${url}</a></li>`;
+    const fileName = path.basename(file);
+    const breadcrumbAttr = noBreadcrumbs.includes(fileName)
+      ? ' data-breadcrumbs="false"'
+      : '';
+    return `      <li><a href="${url}"${breadcrumbAttr}>${url}</a></li>`;
   })
   .join('\n');
 
