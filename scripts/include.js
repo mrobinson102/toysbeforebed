@@ -35,4 +35,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     })
     .catch(err => console.error("Footer load error:", err));
+
+  // Skip breadcrumbs on specific pages
+  const page = window.location.pathname.split("/").pop();
+  if (page === "sitemap.html" || page === "thank-you.html") {
+    const crumbs = document.querySelector(".breadcrumbs");
+    if (crumbs) {
+      crumbs.remove();
+    }
+  }
 });
