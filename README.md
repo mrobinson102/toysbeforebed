@@ -7,7 +7,7 @@ Deployed via **GitHub Pages** at: [https://toysbeforebed.com](https://toysbefore
 - ✅ Polished hero banner (1920×700, WebP + JPG fallback) with parallax + zoom + fade animations  
 - ✅ 6 product placeholders (400×400) with **descriptive alt text** for accessibility + SEO  
 - ✅ Responsive layout (desktop + mobile)  
-- ✅ Footer trust strip: *Discreet Shipping • Inclusive Designs • 100% Comfort Guarantee*  
+- ✅ Footer trust strip: *Discreet Shipping • Inclusive Designs*
 - ✅ Dynamic “Last Updated” footer date  
 
 **Last site update:** August 31, 2025  
