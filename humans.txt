@@ -1,7 +1,7 @@
 /* TEAM */
 Creator: Michelle Goulbourne Robinson
 Role: Founder & Data Architect
-Website: https://mrobinson102.github.io/toysbeforebed/
+Website: https://toysbeforebed.com/
 Contact: info@toysbeforebed.com
 
 /* SITE */

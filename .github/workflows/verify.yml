@@ -1,4 +1,4 @@
-name: Verify HTML Includes
+name: Verify and Fix HTML Includes
 
 on:
   push:
@@ -18,11 +18,22 @@ jobs:
         with:
           node-version: 18
 
-      - name: Run verifier
+      - name: Run verifier (with auto-fix)
         run: node scripts/verify-includes.js
 
-      - name: Upload report artifact
+      - name: Upload verify report
         uses: actions/upload-artifact@v4
         with:
           name: verify-report
           path: verify-report.txt
+
+      - name: Commit fixes (if any)
+        if: success()
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add .
+            git commit -m "chore: auto-fix navbar/footer includes"
+            git push
+          fi

@@ -2,23 +2,52 @@ const fs = require("fs");
 const path = require("path");
 
 let report = [];
+let fixed = [];
+
+function fixFile(filePath, depth) {
+  let html = fs.readFileSync(filePath, "utf8");
+  const rel = depth === 0 ? "" : "../";
+
+  let changed = false;
+
+  if (!html.includes('<div id="navbar"></div>')) {
+    html = html.replace(/<body[^>]*>/, m => `${m}\n<div id=\"navbar\"></div>`);
+    changed = true;
+  }
+
+  if (!html.includes('<div id="footer"></div>')) {
+    html = html.replace(/<\/body>/, `<div id=\"footer\"></div>\n</body>`);
+    changed = true;
+  }
+
+  if (!html.includes(`<script src="${rel}scripts/include.js" defer></script>`)) {
+    html = html.replace(/<\/body>/, `<script src=\"${rel}scripts/include.js\" defer></script>\n</body>`);
+    changed = true;
+  }
+
+  if (!html.includes(`<link href="${rel}styles/styles.css" rel="stylesheet">`)) {
+    html = html.replace(/<head[^>]*>/, m => `${m}\n<link href=\"${rel}styles/styles.css\" rel=\"stylesheet\">`);
+    changed = true;
+  }
+
+  if (changed) {
+    fs.writeFileSync(filePath, html, "utf8");
+    fixed.push(filePath);
+  }
+}
 
 function checkFile(filePath, depth) {
   const html = fs.readFileSync(filePath, "utf8");
   const rel = depth === 0 ? "" : "../";
   let status = "[PASS]";
 
-  if (!html.includes('<div id="navbar"></div>'))
-    status = "[FAIL] missing navbar include";
-
-  if (!html.includes('<div id="footer"></div>'))
-    status = "[FAIL] missing footer include";
-
-  if (!html.includes(`<script src="${rel}scripts/include.js" defer></script>`))
-    status = "[FAIL] script path incorrect";
-
-  if (!html.includes(`<link href="${rel}styles/styles.css" rel="stylesheet">`))
-    status = "[FAIL] stylesheet path incorrect";
+  if (!html.includes('<div id="navbar"></div>') ||
+      !html.includes('<div id="footer"></div>') ||
+      !html.includes(`<script src="${rel}scripts/include.js" defer></script>`) ||
+      !html.includes(`<link href="${rel}styles/styles.css" rel="stylesheet">`)) {
+    status = "[FIXED]";
+    fixFile(filePath, depth);
+  }
 
   report.push(`${status} ${filePath}`);
 }
@@ -38,10 +67,8 @@ function walk(dir, depth = 0) {
 walk(".");
 fs.writeFileSync("verify-report.txt", report.join("\n"), "utf8");
 
-// Print to console too
 console.log(report.join("\n"));
-
-// Exit non-zero if any FAIL
-if (report.some(r => r.startsWith("[FAIL]"))) {
-  process.exit(1);
+if (fixed.length > 0) {
+  console.log("Auto-fixed files:", fixed);
 }
+

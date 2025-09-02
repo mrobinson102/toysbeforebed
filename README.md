@@ -1,7 +1,7 @@
 # Toys Before Bed™
 
 Elegant, gender‑neutral adult toy storefront built with HTML, CSS, and JS.  
-Deployed via **GitHub Pages** at: [https://mrobinson102.github.io/toysbeforebed](https://mrobinson102.github.io/toysbeforebed)
+Deployed via **GitHub Pages** at: [https://toysbeforebed.com](https://toysbeforebed.com)
 
 ## Features
 - ✅ Polished hero banner (1920×700, WebP + JPG fallback) with parallax + zoom + fade animations  
