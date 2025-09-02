@@ -491,3 +491,46 @@ nav a:hover {
   text-decoration: underline; /* underline only on hover */
   color: #5a0a0a;            /* darker maroon hover */
 }
+
+/* Breadcrumb Styling */
+#breadcrumbs {
+  font-family: 'Crimson Text', serif;
+  margin: 10px 20px;
+  padding: 8px 12px;
+  background: #f9f4f4;
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+#breadcrumbs a {
+  color: #7c0e0c;
+  text-decoration: none;
+  font-weight: 600;
+}
+#breadcrumbs a:hover {
+  text-decoration: underline;
+}
+#breadcrumbs span {
+  margin: 0 5px;
+  color: #555;
+}
+
+/* Footer Fix */
+footer {
+  background-color: #7c0e0c;
+  color: #fff;
+  padding: 20px 10px;
+  text-align: center;
+}
+footer a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 8px;
+  font-weight: 500;
+}
+footer a:hover {
+  text-decoration: underline;
+}
+footer .tagline {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
