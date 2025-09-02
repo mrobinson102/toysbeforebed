@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 
 const rootDir = path.resolve(__dirname, '..');
-const BASE_URL = 'https://toysbeforebed.com';
 
 function getHtmlFiles(dir) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -27,13 +26,12 @@ const noBreadcrumbs = ['sitemap.html', 'thank-you.html'];
 
 const listItems = htmlFiles
   .map(file => {
-    const urlPath = '/' + file.replace(/\\/g, '/');
-    const url = BASE_URL + urlPath;
+    const relPath = file.replace(/\\/g, '/');
     const fileName = path.basename(file);
     const breadcrumbAttr = noBreadcrumbs.includes(fileName)
       ? ' data-breadcrumbs="false"'
       : '';
-    return `      <li><a href="${url}"${breadcrumbAttr}>${url}</a></li>`;
+    return `      <li><a href="${relPath}"${breadcrumbAttr}>${relPath}</a></li>`;
   })
   .join('\n');
 
@@ -65,9 +63,8 @@ const today = new Date().toISOString().split('T')[0];
 let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
 xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 htmlFiles.forEach(file => {
-  const urlPath = '/' + file.replace(/\\/g, '/');
-  const url = BASE_URL + urlPath;
-  xml += `  <url>\n    <loc>${url}</loc>\n    <lastmod>${today}</lastmod>\n  </url>\n`;
+  const relPath = file.replace(/\\/g, '/');
+  xml += `  <url>\n    <loc>${relPath}</loc>\n    <lastmod>${today}</lastmod>\n  </url>\n`;
 });
 xml += '</urlset>\n';
 fs.writeFileSync(path.join(rootDir, 'sitemap.xml'), xml, 'utf-8');
