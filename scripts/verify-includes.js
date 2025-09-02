@@ -46,7 +46,12 @@ function checkLinks(filePath, html, depth) {
   while ((match = regex.exec(html))) {
     const href = match[1];
     if (href.startsWith("http") || href.startsWith("#")) continue; // skip external/anchors
-    const relPath = depth === 0 ? href : path.join("..", href);
+    let relPath;
+    if (href.startsWith("/")) {
+      relPath = href.slice(1);
+    } else {
+      relPath = depth === 0 ? href : path.join("..", href);
+    }
     if (!fileExists(relPath)) {
       brokenLinks.push(`${filePath}: Broken link → ${href}`);
     }
