@@ -5,3 +5,4 @@ __pycache__/
 .vscode/
 .idea/
 verify-report.txt
+broken-links.txt
