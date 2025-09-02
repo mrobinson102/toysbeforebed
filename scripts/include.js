@@ -4,6 +4,34 @@ document.addEventListener("DOMContentLoaded", () => {
   const depth = window.location.pathname.split("/").length - 2;
   const basePath = depth > 0 ? "../".repeat(depth) : "./";
 
+  function updateLinks(container) {
+    if (!container) return;
+    container.querySelectorAll("a[href]").forEach(a => {
+      const href = a.getAttribute("href");
+      if (href.startsWith("http") || href.startsWith("mailto:") || href.startsWith("#") || href.startsWith("/")) return;
+      a.setAttribute("href", basePath + href);
+    });
+  }
+
+  function renderBreadcrumbs(el) {
+    if (!el) return;
+    const path = window.location.pathname;
+    const crumbs = [`<a href="${basePath}index.html">Home</a>`];
+
+    if (path.includes("/blog/")) {
+      crumbs.push(`<a href="${basePath}blog.html">Blog</a>`);
+    } else if (path.includes("/bedside/")) {
+      crumbs.push(`<a href="${basePath}bedside.html">Bedside</a>`);
+    } else if (path.includes("/products/")) {
+      crumbs.push(`<a href="${basePath}index.html#products">Products</a>`);
+    }
+
+    const pageTitle = document.title.split("|")[0].trim();
+    crumbs.push(`<span>${pageTitle}</span>`);
+
+    el.innerHTML = crumbs.join('<span>›</span>');
+  }
+
   // Load Navbar
   fetch(basePath + "includes/navbar.html")
     .then(res => res.text())
@@ -11,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const container = document.getElementById("navbar");
       if (container) {
         container.innerHTML = html;
+        updateLinks(container);
       }
     })
     .catch(err => console.error("Navbar load error:", err));
@@ -22,6 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const container = document.getElementById("footer");
       if (container) {
         container.innerHTML = html;
+        updateLinks(container);
 
         // Auto-update "Last updated" span
         const dateEl = document.getElementById("last-updated");
@@ -36,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch(err => console.error("Footer load error:", err));
 
-  // Only render breadcrumbs on pages not in the skip list
+  // Breadcrumb skip list
   const noBreadcrumbs = [
     "index.html",
     "about.html",
@@ -53,8 +83,11 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   const currentPage = window.location.pathname.split("/").pop() || "index.html";
+  const breadcrumbEl = document.querySelector(".breadcrumbs");
 
-  if (!noBreadcrumbs.includes(currentPage)) {
-    renderBreadcrumbs(); // existing breadcrumb logic
+  if (noBreadcrumbs.includes(currentPage)) {
+    if (breadcrumbEl) breadcrumbEl.remove();
+  } else {
+    renderBreadcrumbs(breadcrumbEl);
   }
 });
