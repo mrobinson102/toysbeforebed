@@ -36,13 +36,25 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch(err => console.error("Footer load error:", err));
 
-  // Skip breadcrumbs on specific pages
-  const noBreadcrumbs = ["sitemap.html", "thank-you.html"];
-  const currentPage = window.location.pathname.split("/").pop();
-  if (noBreadcrumbs.includes(currentPage)) {
-    const crumbs = document.querySelector(".breadcrumbs");
-    if (crumbs) {
-      crumbs.remove();
-    }
+  // Only render breadcrumbs on pages not in the skip list
+  const noBreadcrumbs = [
+    "index.html",
+    "about.html",
+    "join.html",
+    "faq.html",
+    "contact.html",
+    "privacy.html",
+    "privacy-uk.html",
+    "terms.html",
+    "returns.html",
+    "2257.html",
+    "sitemap.html",
+    "thank-you.html"
+  ];
+
+  const currentPage = window.location.pathname.split("/").pop() || "index.html";
+
+  if (!noBreadcrumbs.includes(currentPage)) {
+    renderBreadcrumbs(); // existing breadcrumb logic
   }
 });

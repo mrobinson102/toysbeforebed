@@ -514,6 +514,7 @@ nav a:hover {
     color: #555;
     font-weight: 400;
   }
+  /* Hide breadcrumbs if present but empty */
   .breadcrumbs:empty {
     display: none;
   }
