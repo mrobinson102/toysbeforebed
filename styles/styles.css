@@ -496,23 +496,23 @@ nav a:hover {
      Breadcrumbs Styling
   ------------------------------ */
   .breadcrumbs {
-    margin: 1rem auto;
-    max-width: 1200px;
-    font-size: 0.95rem;
-    color: #7c0e0c;
+    font-size: 0.9rem;
+    margin: 10px 0;
+    padding: 5px 10px;
+    background-color: #fdf2f2;
+    border-radius: 6px;
+    color: #600;
   }
   .breadcrumbs a {
-    color: #7c0e0c;
+    color: #600;
     text-decoration: none;
-    font-weight: 600;
   }
   .breadcrumbs a:hover {
     text-decoration: underline;
-    color: #5a0a0a;
   }
   .breadcrumbs span {
-    color: #555;
-    font-weight: 400;
+    margin: 0 5px;
+    color: #900;
   }
   /* Hide breadcrumbs if present but empty */
   .breadcrumbs:empty {
