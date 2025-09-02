@@ -1,31 +1,26 @@
 const fs = require("fs");
 const path = require("path");
 
+let report = [];
+
 function checkFile(filePath, depth) {
   const html = fs.readFileSync(filePath, "utf8");
   const rel = depth === 0 ? "" : "../";
-
-  const results = [];
+  let status = "[PASS]";
 
   if (!html.includes('<div id="navbar"></div>'))
-    results.push("[FAIL] missing navbar include");
+    status = "[FAIL] missing navbar include";
 
   if (!html.includes('<div id="footer"></div>'))
-    results.push("[FAIL] missing footer include");
+    status = "[FAIL] missing footer include";
 
   if (!html.includes(`<script src="${rel}scripts/include.js" defer></script>`))
-    results.push("[FAIL] script path incorrect");
+    status = "[FAIL] script path incorrect";
 
   if (!html.includes(`<link href="${rel}styles/styles.css" rel="stylesheet">`))
-    results.push("[FAIL] stylesheet path incorrect");
+    status = "[FAIL] stylesheet path incorrect";
 
-  if (results.length === 0) {
-    console.log(`[PASS] ${filePath}`);
-  } else {
-    console.log(`[FAIL] ${filePath}`);
-    results.forEach(r => console.log("  " + r));
-    process.exitCode = 1;
-  }
+  report.push(`${status} ${filePath}`);
 }
 
 function walk(dir, depth = 0) {
@@ -33,9 +28,7 @@ function walk(dir, depth = 0) {
     const filepath = path.join(dir, file);
     const stat = fs.statSync(filepath);
     if (stat.isDirectory()) {
-      if (file !== "includes") {
-        walk(filepath, depth + 1);
-      }
+      walk(filepath, depth + 1);
     } else if (file.endsWith(".html")) {
       checkFile(filepath, depth);
     }
@@ -43,3 +36,12 @@ function walk(dir, depth = 0) {
 }
 
 walk(".");
+fs.writeFileSync("verify-report.txt", report.join("\n"), "utf8");
+
+// Print to console too
+console.log(report.join("\n"));
+
+// Exit non-zero if any FAIL
+if (report.some(r => r.startsWith("[FAIL]"))) {
+  process.exit(1);
+}
