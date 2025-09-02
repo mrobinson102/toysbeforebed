@@ -3,11 +3,15 @@ const path = require("path");
 
 let report = [];
 let fixed = [];
+let brokenLinks = [];
+
+function fileExists(relPath) {
+  return fs.existsSync(path.join(".", relPath));
+}
 
 function fixFile(filePath, depth) {
   let html = fs.readFileSync(filePath, "utf8");
   const rel = depth === 0 ? "" : "../";
-
   let changed = false;
 
   if (!html.includes('<div id="navbar"></div>')) {
@@ -36,6 +40,19 @@ function fixFile(filePath, depth) {
   }
 }
 
+function checkLinks(filePath, html, depth) {
+  const regex = /<a\s+[^>]*href=["']([^"']+)["']/gi;
+  let match;
+  while ((match = regex.exec(html))) {
+    const href = match[1];
+    if (href.startsWith("http") || href.startsWith("#")) continue; // skip external/anchors
+    const relPath = depth === 0 ? href : path.join("..", href);
+    if (!fileExists(relPath)) {
+      brokenLinks.push(`${filePath}: Broken link → ${href}`);
+    }
+  }
+}
+
 function checkFile(filePath, depth) {
   const html = fs.readFileSync(filePath, "utf8");
   const rel = depth === 0 ? "" : "../";
@@ -49,6 +66,7 @@ function checkFile(filePath, depth) {
     fixFile(filePath, depth);
   }
 
+  checkLinks(filePath, html, depth);
   report.push(`${status} ${filePath}`);
 }
 
@@ -66,9 +84,8 @@ function walk(dir, depth = 0) {
 
 walk(".");
 fs.writeFileSync("verify-report.txt", report.join("\n"), "utf8");
+fs.writeFileSync("broken-links.txt", brokenLinks.join("\n"), "utf8");
 
 console.log(report.join("\n"));
-if (fixed.length > 0) {
-  console.log("Auto-fixed files:", fixed);
-}
-
+if (fixed.length > 0) console.log("Auto-fixed files:", fixed);
+if (brokenLinks.length > 0) console.log("Broken links found:", brokenLinks);
