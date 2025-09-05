@@ -492,32 +492,36 @@ nav a:hover {
   color: #5a0a0a;            /* darker maroon hover */
 }
 
-  /* ------------------------------
-     Breadcrumbs Styling
-  ------------------------------ */
-  .breadcrumbs {
-    font-size: 0.9rem;
-    margin: 10px 0;
-    padding: 5px 10px;
-    background-color: #fdf2f2;
-    border-radius: 6px;
-    color: #600;
-  }
-  .breadcrumbs a {
-    color: #600;
-    text-decoration: none;
-  }
-  .breadcrumbs a:hover {
-    text-decoration: underline;
-  }
-  .breadcrumbs span {
-    margin: 0 5px;
-    color: #900;
-  }
-  /* Hide breadcrumbs if present but empty */
-  .breadcrumbs:empty {
-    display: none;
-  }
+/* ------------------------------
+   Breadcrumb
+------------------------------ */
+.breadcrumb {
+  font-family: "Crimson Text", serif;
+  font-size: 0.9rem;
+  color: #fff8f0;
+  background: #7c0e0c;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+.breadcrumb a {
+  color: #fff8f0;
+  text-decoration: none;
+}
+.breadcrumb a:hover {
+  color: #ffd966;
+  text-decoration: underline;
+}
+.breadcrumb .separator {
+  color: #f5e1d4;
+  margin: 0 0.25rem;
+}
+.breadcrumb:empty {
+  display: none;
+}
 
   <!-- Product Card Button Styling -->
   /* ------------------------------
