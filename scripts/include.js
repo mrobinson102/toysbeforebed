@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (path.includes("/blog/")) {
       crumbs.push(`<a href="${basePath}blog.html">Blog</a>`);
     } else if (path.includes("/bedside/")) {
-      crumbs.push(`<a href="${basePath}bedside.html">Bedside</a>`);
+      crumbs.push(`<a href="${basePath}bedside.html">Bedside Reading</a>`);
     } else if (path.includes("/products/")) {
       crumbs.push(`<a href="${basePath}index.html#products">Products</a>`);
     }
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const pageTitle = document.title.split("|")[0].trim();
     crumbs.push(`<span>${pageTitle}</span>`);
 
-    el.innerHTML = crumbs.join('<span>›</span>');
+    el.innerHTML = crumbs.join('<span class="separator">&gt;</span>');
   }
 
   // Load Navbar
@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   const currentPage = window.location.pathname.split("/").pop() || "index.html";
-  const breadcrumbEl = document.querySelector(".breadcrumbs");
+  const breadcrumbEl = document.querySelector(".breadcrumb");
 
   if (noBreadcrumbs.includes(currentPage)) {
     if (breadcrumbEl) breadcrumbEl.remove();
