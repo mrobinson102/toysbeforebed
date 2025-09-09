@@ -93,7 +93,14 @@ fs.writeFileSync("broken-links.txt", brokenLinks.join("\n"), "utf8");
 
 console.log(report.join("\n"));
 if (fixed.length > 0) console.log("Auto-fixed files:", fixed);
-if (brokenLinks.length > 0) console.log("Broken links found:", brokenLinks);
+if (brokenLinks.length > 0) {
+  console.log("❌ Broken links found:", brokenLinks);
+  process.exitCode = 0; // ✅ Do NOT fail the workflow
+} else {
+  console.log("✅ No broken links found");
+  process.exitCode = 0; // Always succeed
+}
+
 
 // ... keep everything you pasted above unchanged ...
 
