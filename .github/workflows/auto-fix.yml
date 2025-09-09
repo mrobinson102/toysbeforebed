@@ -7,17 +7,16 @@ on:
       - completed
 
 jobs:
-  autofix:
+  auto-fix:
+    if: ${{ github.event.workflow_run.conclusion == 'failure' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: write    # allow pushing fixes
 
     steps:
-      - name: Checkout repo on main
+      - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          ref: main
-          fetch-depth: 0   # ensures full history so git push works
+          ref: ${{ github.event.workflow_run.head_branch }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -26,16 +25,17 @@ jobs:
 
       - name: Run verifier with auto-fix
         run: |
-          node scripts/verify-includes.js || true
+          node ./scripts/verify-includes.js || true
+          echo "✅ Auto-fix completed, continuing to commit if changes exist"
 
       - name: Commit and push fixes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
-          if git diff --cached --quiet; then
-            echo "✅ No fixes needed"
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add .
+            git commit -m "chore(auto-fix): apply HTML includes and link fixes"
+            git push origin HEAD:${{ github.event.workflow_run.head_branch }}
           else
-            git commit -m "chore(auto-fix): Apply HTML verification fixes"
-            git push origin main
+            echo "✅ No changes to commit"
           fi
