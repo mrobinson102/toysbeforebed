@@ -1,40 +1,35 @@
 name: Verify and Fix HTML
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+  push:
+    branches:
+      - main
 
 jobs:
   verify:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
 
       - name: Run verifier
-        run: node scripts/verify-includes.js
+        run: |
+          npm install
+          node scripts/verify-includes.js
+          echo "✅ HTML include and link verification complete"
 
       - name: Upload reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: verify-reports
           path: |
-            verify-report.txt
-            broken-links.txt
-
-      - name: Commit fixes (if any)
-        run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add .
-            git commit -m "chore: auto-fix includes + link validation"
-            git push
-          fi
+            verify-report*.txt
+            *.log
