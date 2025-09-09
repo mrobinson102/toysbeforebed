@@ -23,8 +23,7 @@ jobs:
           node-version: 22
 
       - name: Run verifier in auto-fix mode
-        run: |
-          node scripts/verify-includes.js || true
+        run: bash -c "node scripts/verify-includes.js || true"
 
       - name: Commit and push fixes
         run: |
