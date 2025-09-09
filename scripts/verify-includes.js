@@ -94,3 +94,27 @@ fs.writeFileSync("broken-links.txt", brokenLinks.join("\n"), "utf8");
 console.log(report.join("\n"));
 if (fixed.length > 0) console.log("Auto-fixed files:", fixed);
 if (brokenLinks.length > 0) console.log("Broken links found:", brokenLinks);
+
+// ... keep everything you pasted above unchanged ...
+
+walk(".");
+fs.writeFileSync("verify-report.txt", report.join("\n"), "utf8");
+fs.writeFileSync("broken-links.txt", brokenLinks.join("\n"), "utf8");
+
+console.log(report.join("\n"));
+if (fixed.length > 0) console.log("Auto-fixed files:", fixed);
+if (brokenLinks.length > 0) console.log("Broken links found:", brokenLinks);
+
+// ------------------ STRICT MODE HANDLING ------------------
+const args = process.argv.slice(2);
+const strictMode = args.includes("--strict");
+
+if (strictMode) {
+  if (fixed.length > 0 || brokenLinks.length > 0) {
+    console.error("❌ Strict mode: includes or links need attention. Failing.");
+    process.exit(1);
+  } else {
+    console.log("✅ Strict mode: all includes and links valid.");
+  }
+}
+
