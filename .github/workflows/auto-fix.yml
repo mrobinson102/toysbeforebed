@@ -8,8 +8,8 @@ on:
 
 jobs:
   auto-fix:
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout repo
@@ -22,29 +22,19 @@ jobs:
         with:
           node-version: 22
 
-      - name: Run verifier in auto-fix mode
-        run: bash -c "node scripts/verify-includes.js || true"
+      - name: Run auto-fix
+        shell: bash
+        run: |
+          bash -c "node scripts/verify-includes.js || true"
 
-      - name: Commit and push fixes
+      - name: Commit fixes if any
         run: |
           if [ -n "$(git status --porcelain)" ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
             git add .
-            git commit -m "chore(auto-fix): HTML includes + links"
+            git commit -m "chore: auto-fix includes + link validation"
             git push origin main
           else
             echo "No fixes needed"
           fi
-
-  trigger-deploy:
-    needs: auto-fix
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
-      - name: Trigger Pages rebuild
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          event-type: trigger-pages-build
