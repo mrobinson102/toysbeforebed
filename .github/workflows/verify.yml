@@ -19,10 +19,13 @@ jobs:
         with:
           node-version: 22
 
-      - name: Run verifier
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run verifier (strict mode)
         run: |
-          npm install
-          node scripts/verify-includes.js
+          set -e
+          node scripts/verify-includes.js --strict
           echo "✅ HTML include and link verification complete"
 
       - name: Upload reports
@@ -32,4 +35,5 @@ jobs:
           name: verify-reports
           path: |
             verify-report*.txt
+            broken-links.txt
             *.log
