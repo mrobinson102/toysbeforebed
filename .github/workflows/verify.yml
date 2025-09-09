@@ -23,7 +23,19 @@ jobs:
         run: |
           npm install
           node scripts/verify-includes.js --strict || echo "❌ Verifier reported issues"
-        continue-on-error: true  # don’t stop job, so reports can upload
+        continue-on-error: true
+
+      - name: Summarize results
+        if: always()
+        run: |
+          echo "### 🔎 HTML Verification Results" >> $GITHUB_STEP_SUMMARY
+          if [ -f broken-links.txt ] && [ -s broken-links.txt ]; then
+            count=$(wc -l < broken-links.txt)
+            echo "❌ Found **$count broken links**. See artifacts for details." >> $GITHUB_STEP_SUMMARY
+            cat broken-links.txt >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ No broken links found" >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Upload reports
         if: always()
