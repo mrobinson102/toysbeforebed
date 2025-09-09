@@ -20,7 +20,10 @@ jobs:
           node-version: 22
 
       - name: Run verifier
-        run: bash -c "node scripts/verify-includes.js || true && echo '✅ HTML include and link verification complete'"
+        shell: bash
+        run: |
+          bash -c "node scripts/verify-includes.js || true"
+          echo "✅ HTML include and link verification complete"
 
       - name: Upload reports
         if: always()
