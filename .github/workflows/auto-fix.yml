@@ -8,14 +8,13 @@ on:
 
 jobs:
   auto-fix:
-    if: ${{ github.event.workflow_run.conclusion == 'failure' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_branch }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
@@ -23,19 +22,30 @@ jobs:
         with:
           node-version: 22
 
-      - name: Run verifier with auto-fix
+      - name: Run verifier in auto-fix mode
         run: |
-          node ./scripts/verify-includes.js || true
-          echo "✅ Auto-fix completed, continuing to commit if changes exist"
+          node scripts/verify-includes.js || true
 
       - name: Commit and push fixes
         run: |
-          if [[ -n "$(git status --porcelain)" ]]; then
+          if [ -n "$(git status --porcelain)" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git add .
-            git commit -m "chore(auto-fix): apply HTML includes and link fixes"
-            git push origin HEAD:${{ github.event.workflow_run.head_branch }}
+            git commit -m "chore(auto-fix): HTML includes + links"
+            git push origin main
           else
-            echo "✅ No changes to commit"
+            echo "No fixes needed"
           fi
+
+  trigger-deploy:
+    needs: auto-fix
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Trigger Pages rebuild
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          event-type: trigger-pages-build
