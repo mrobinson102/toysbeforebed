@@ -1,7 +1,9 @@
 name: Autofix HTML and Sitemap
 
 on:
-  workflow_dispatch:   # manual trigger only
+  workflow_dispatch:    # allow manual trigger from Actions tab
+  schedule:
+    - cron: "0 0 * * *"   # run every day at 00:00 UTC
 
 jobs:
   autofix:
@@ -29,5 +31,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit -m "Autofix: includes and sitemap update" || echo "No changes to commit"
+          git commit -m "Autofix: includes and sitemap update [skip ci]" || echo "No changes to commit"
           git push origin main
