@@ -1,137 +1,46 @@
-const fs = require("fs");
-const path = require("path");
+name: Verify and Fix HTML
 
-let report = [];
-let fixed = [];
-let brokenLinks = [];
+on:
+  pull_request:
+  push:
+    branches:
+      - main
 
-function fileExists(relPath) {
-  return fs.existsSync(path.join(".", relPath));
-}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
 
-function fixFile(filePath, depth) {
-  let html = fs.readFileSync(filePath, "utf8");
-  const rel = depth === 0 ? "" : "../";
-  let changed = false;
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
-  if (!html.includes('<div id="navbar"></div>')) {
-    html = html.replace(/<body[^>]*>/, m => `${m}\n<div id=\"navbar\"></div>`);
-    changed = true;
-  }
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
-  if (!html.includes('<div id="footer"></div>')) {
-    html = html.replace(/<\/body>/, `<div id=\"footer\"></div>\n</body>`);
-    changed = true;
-  }
+      - name: Run verifier
+        run: |
+          npm install
+          node scripts/verify-includes.js
+          echo "✅ HTML include and link verification complete"
 
-  if (!html.includes(`<script src="${rel}scripts/include.js" defer></script>`)) {
-    html = html.replace(/<\/body>/, `<script src=\"${rel}scripts/include.js\" defer></script>\n</body>`);
-    changed = true;
-  }
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-reports
+          path: |
+            verify-report*.txt
+            broken-links.txt
 
-  if (!html.includes(`<link href="${rel}styles/styles.css" rel="stylesheet">`)) {
-    html = html.replace(/<head[^>]*>/, m => `${m}\n<link href=\"${rel}styles/styles.css\" rel=\"stylesheet\">`);
-    changed = true;
-  }
-
-  if (changed) {
-    fs.writeFileSync(filePath, html, "utf8");
-    fixed.push(filePath);
-  }
-}
-
-function checkLinks(filePath, html, depth) {
-  const regex = /<a\s+[^>]*href=["']([^"']+)["']/gi;
-  let match;
-  while ((match = regex.exec(html))) {
-    const href = match[1];
-    if (href.startsWith("http") || href.startsWith("#")) continue; // skip external/anchors
-    let relPath;
-    if (href.startsWith("/")) {
-      relPath = href.slice(1);
-    } else {
-      relPath = depth === 0 ? href : path.join("..", href);
-    }
-    if (!fileExists(relPath)) {
-      brokenLinks.push(`${filePath}: Broken link → ${href}`);
-    }
-  }
-}
-
-function checkFile(filePath, depth) {
-  const html = fs.readFileSync(filePath, "utf8");
-  const rel = depth === 0 ? "" : "../";
-  let status = "[PASS]";
-
-  if (!html.includes('<div id="navbar"></div>') ||
-      !html.includes('<div id="footer"></div>') ||
-      !html.includes(`<script src="${rel}scripts/include.js" defer></script>`) ||
-      !html.includes(`<link href="${rel}styles/styles.css" rel="stylesheet">`)) {
-    status = "[FIXED]";
-    fixFile(filePath, depth);
-  }
-
-  checkLinks(filePath, html, depth);
-  report.push(`${status} ${filePath}`);
-}
-
-function walk(dir, depth = 0) {
-  fs.readdirSync(dir).forEach(file => {
-    const filepath = path.join(dir, file);
-    const stat = fs.statSync(filepath);
-    if (stat.isDirectory()) {
-      walk(filepath, depth + 1);
-    } else if (file.endsWith(".html")) {
-      checkFile(filepath, depth);
-    }
-  });
-}
-
-walk(".");
-fs.writeFileSync("verify-report.txt", report.join("\n"), "utf8");
-fs.writeFileSync("broken-links.txt", brokenLinks.join("\n"), "utf8");
-
-console.log(report.join("\n"));
-if (fixed.length > 0) console.log("Auto-fixed files:", fixed);
-if (brokenLinks.length > 0) {
-  console.log("❌ Broken links found:", brokenLinks);
-  process.exitCode = 0; // ✅ Do NOT fail the workflow
-} else {
-  console.log("✅ No broken links found");
-  process.exitCode = 0; // Always succeed
-}
-
-
-// ... keep everything you pasted above unchanged ...
-
-// Write reports
-fs.writeFileSync("verify-report.txt", report.join("\n"), "utf8");
-fs.writeFileSync("broken-links.txt", brokenLinks.join("\n"), "utf8");
-
-console.log(report.join("\n"));
-if (fixed.length > 0) console.log("Auto-fixed files:", fixed);
-if (brokenLinks.length > 0) console.log("Broken links found:", brokenLinks);
-
-// Handle --strict mode
-const args = process.argv.slice(2);
-if (args.includes("--strict")) {
-  if (fixed.length > 0 || brokenLinks.length > 0) {
-    process.exit(1); // fail CI
-  }
-}
-
-process.exit(0); // success
-
-// ------------------ STRICT MODE HANDLING ------------------
-const args = process.argv.slice(2);
-const strictMode = args.includes("--strict");
-
-if (strictMode) {
-  if (fixed.length > 0 || brokenLinks.length > 0) {
-    console.error("❌ Strict mode: includes or links need attention. Failing.");
-    process.exit(1);
-  } else {
-    console.log("✅ Strict mode: all includes and links valid.");
-  }
-}
-
+      - name: Auto-commit fixes
+        if: success()
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: auto-fix HTML includes and links" || echo "No changes to commit"
+          git push
