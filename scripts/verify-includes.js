@@ -97,13 +97,23 @@ if (brokenLinks.length > 0) console.log("Broken links found:", brokenLinks);
 
 // ... keep everything you pasted above unchanged ...
 
-walk(".");
+// Write reports
 fs.writeFileSync("verify-report.txt", report.join("\n"), "utf8");
 fs.writeFileSync("broken-links.txt", brokenLinks.join("\n"), "utf8");
 
 console.log(report.join("\n"));
 if (fixed.length > 0) console.log("Auto-fixed files:", fixed);
 if (brokenLinks.length > 0) console.log("Broken links found:", brokenLinks);
+
+// Handle --strict mode
+const args = process.argv.slice(2);
+if (args.includes("--strict")) {
+  if (fixed.length > 0 || brokenLinks.length > 0) {
+    process.exit(1); // fail CI
+  }
+}
+
+process.exit(0); // success
 
 // ------------------ STRICT MODE HANDLING ------------------
 const args = process.argv.slice(2);
