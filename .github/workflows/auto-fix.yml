@@ -1,0 +1,41 @@
+name: Auto-Fix HTML
+
+on:
+  workflow_run:
+    workflows: ["Verify and Fix HTML"]
+    types:
+      - completed
+
+jobs:
+  autofix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write    # allow pushing fixes
+
+    steps:
+      - name: Checkout repo on main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0   # ensures full history so git push works
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run verifier with auto-fix
+        run: |
+          node scripts/verify-includes.js || true
+
+      - name: Commit and push fixes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "✅ No fixes needed"
+          else
+            git commit -m "chore(auto-fix): Apply HTML verification fixes"
+            git push origin main
+          fi
