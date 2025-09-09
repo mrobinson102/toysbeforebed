@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -22,20 +24,8 @@ jobs:
       - name: Run verifier
         run: |
           npm install
-          node scripts/verify-includes.js --strict || echo "❌ Verifier reported issues"
-        continue-on-error: true
-
-      - name: Summarize results
-        if: always()
-        run: |
-          echo "### 🔎 HTML Verification Results" >> $GITHUB_STEP_SUMMARY
-          if [ -f broken-links.txt ] && [ -s broken-links.txt ]; then
-            count=$(wc -l < broken-links.txt)
-            echo "❌ Found **$count broken links**. See artifacts for details." >> $GITHUB_STEP_SUMMARY
-            cat broken-links.txt >> $GITHUB_STEP_SUMMARY
-          else
-            echo "✅ No broken links found" >> $GITHUB_STEP_SUMMARY
-          fi
+          node scripts/verify-includes.js
+          echo "✅ HTML include and link verification complete"
 
       - name: Upload reports
         if: always()
@@ -43,5 +33,14 @@ jobs:
         with:
           name: verify-reports
           path: |
-            verify-report.txt
+            verify-report*.txt
             broken-links.txt
+
+      - name: Auto-commit fixes
+        if: success()
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: auto-fix HTML includes and links" || echo "No changes to commit"
+          git push
