@@ -1,69 +1,235 @@
-body {
-  font-family: "Crimson Text", serif;
+/* ===== Global Reset ===== */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Crimson Text", serif;
   background: #fdf6f2;
   color: #333;
+  line-height: 1.6;
 }
 
-.breadcrumb {
-  font-family: "Crimson Text", serif;
+/* ===== Navbar ===== */
+#navbar {
   background: #7c0e0c;
-  color: #fdf6f2;
-  padding: 0.5rem 1rem;
-  font-size: 0.95rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
 }
-.breadcrumb a {
+
+#navbar a {
   color: #fdf6f2;
   text-decoration: none;
-}
-.breadcrumb a:hover {
-  color: #ffd9a0;
-}
-.breadcrumb .separator {
-  color: #f5e6db;
-  margin: 0 0.5rem;
+  font-weight: 600;
 }
 
+#navbar a:hover {
+  color: #ffd9a0;
+}
+
+/* ===== Hero Section ===== */
+.hero {
+  position: relative;
+  text-align: center;
+}
+
+.hero img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.hero-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+}
+
+.hero-content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ===== Buttons ===== */
+.btn-primary,
+.btn-secondary {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.btn-primary {
+  background: #7c0e0c;
+  color: #fdf6f2;
+}
+
+.btn-primary:hover {
+  background: #5a0a09;
+}
+
+.btn-secondary {
+  background: #ffd9a0;
+  color: #7c0e0c;
+}
+
+.btn-secondary:hover {
+  background: #fbc982;
+}
+
+/* ===== Grid + Product Cards ===== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  text-align: center;
+}
+
+.card img {
+  max-width: 100%;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.card h3 {
+  margin-bottom: 0.5rem;
+  color: #7c0e0c;
+}
+
+/* ===== Forms ===== */
+form input,
+form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+form button {
+  background: #7c0e0c;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+form button:hover {
+  background: #5a0a09;
+}
+
+/* ===== FAQ ===== */
+.faq-question {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 1rem;
+  background: #f4f4f4;
+  margin: 0.5rem 0;
+  border-radius: 4px;
+}
+
+.faq-answer {
+  display: none;
+  padding: 0.75rem;
+  background: #fff;
+  border-left: 3px solid #7c0e0c;
+}
+
+/* ===== Breadcrumbs ===== */
+.breadcrumb {
+  background: #7c0e0c;
+  color: #fdf6f2;
+  padding: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.breadcrumb a {
+  color: #ffd9a0;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  color: #fff;
+}
+
+.breadcrumb .separator {
+  margin: 0 0.5rem;
+  color: #f5deb3;
+}
+
+/* ===== Footer ===== */
 footer {
   background: #7c0e0c;
   color: #fdf6f2;
   text-align: center;
-  padding: 1.5rem 1rem;
+  padding: 2rem 1rem;
+  margin-top: 2rem;
 }
+
 footer .tagline {
   font-weight: 600;
   margin-bottom: 1rem;
 }
+
 .footer-links {
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 1rem;
-  margin-bottom: 1rem;
 }
+
 .footer-links a {
   color: #ffd9a0;
   text-decoration: none;
-  font-weight: 600;
-}
-.footer-links a:hover {
-  color: #ffffff;
-}
-.back-to-top {
-  color: #ffd9a0;
-  text-decoration: none;
-}
-.back-to-top:hover {
-  color: #ffffff;
 }
 
-@media (max-width: 600px) {
-  .breadcrumb {
-    text-align: center;
-  }
-  .footer-links {
+.footer-links a:hover {
+  color: #fff;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  #navbar {
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
+  }
+
+  .hero-content h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
   }
 }
