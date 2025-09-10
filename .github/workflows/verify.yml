@@ -1,4 +1,4 @@
-name: Verify and Fix HTML
+name: Verify and Test
 
 on:
   pull_request:
@@ -18,22 +18,27 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: "npm"
 
       - name: Install dependencies
         run: npm install
 
-      - name: Run verifier
-        run: node scripts/verify-includes.js || true
+      - name: Run HTML verifier
+        run: |
+          node scripts/verify-includes.js || true
+          echo "✅ HTML verification complete"
 
-      - name: Run Playwright tests
-        run: npx playwright test --reporter=dot
-
-      - name: Upload reports
+      - name: Upload HTML verifier reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: verify-reports
+          name: html-verify-reports
           path: |
             verify-report*.txt
             broken-links.txt
-            *.log
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: npx playwright test --reporter=dot
