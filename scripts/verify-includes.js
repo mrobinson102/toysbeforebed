@@ -1,46 +1,72 @@
-name: Verify and Fix HTML
+const fs = require('fs');
+const path = require('path');
 
-on:
-  pull_request:
-  push:
-    branches:
-      - main
+const rootDir = path.resolve(__dirname, '..');
+const htmlFiles = [];
 
-jobs:
-  verify:
-    runs-on: ubuntu-latest
+function walk(dir) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (['node_modules', '.git', 'includes', 'scripts'].includes(entry.name)) {
+      continue;
+    }
+    const res = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      walk(res);
+    } else if (entry.isFile() && entry.name.endsWith('.html')) {
+      htmlFiles.push(res);
+    }
+  }
+}
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: true
+walk(rootDir);
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
+const reportLines = [];
+const brokenLinks = [];
 
-      - name: Run verifier
-        run: |
-          npm install
-          node scripts/verify-includes.js
-          echo "✅ HTML include and link verification complete"
+for (const file of htmlFiles) {
+  const relPath = path.relative(rootDir, file).replace(/\\/g, '/');
+  const content = fs.readFileSync(file, 'utf8');
+  const missing = [];
 
-      - name: Upload reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: verify-reports
-          path: |
-            verify-report*.txt
-            broken-links.txt
+  if (!content.includes('<div id="navbar"></div>')) missing.push('navbar placeholder');
+  if (!content.includes('<div id="footer"></div>')) missing.push('footer placeholder');
+  if (!content.match(/<script src="(\.\.\/)?scripts\/include.js" defer><\/script>/)) {
+    missing.push('include.js script');
+  }
+  if (!content.includes('styles/styles.css')) missing.push('styles.css link');
 
-      - name: Auto-commit fixes
-        if: success()
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "chore: auto-fix HTML includes and links" || echo "No changes to commit"
-          git push
+  const linkRegex = /<a\s+[^>]*href="([^"#]+)"/g;
+  let match;
+  while ((match = linkRegex.exec(content)) !== null) {
+    const href = match[1];
+    if (href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:')) {
+      continue;
+    }
+    let target;
+    if (href.startsWith('/')) {
+      target = path.join(rootDir, href.slice(1));
+    } else {
+      target = path.resolve(path.dirname(file), href);
+    }
+    if (!fs.existsSync(target)) {
+      brokenLinks.push(`${relPath} -> ${href}`);
+    }
+  }
+
+  if (missing.length === 0) {
+    reportLines.push(`${relPath}: OK`);
+  } else {
+    reportLines.push(`${relPath}: missing ${missing.join(', ')}`);
+  }
+}
+
+fs.writeFileSync(path.join(rootDir, 'verify-report.txt'), reportLines.join('\n') + '\n');
+fs.writeFileSync(path.join(rootDir, 'broken-links.txt'), brokenLinks.join('\n') + '\n');
+
+if (brokenLinks.length || reportLines.some(line => !line.endsWith('OK'))) {
+  console.log('Verification completed with issues. See verify-report.txt and broken-links.txt');
+} else {
+  console.log('Verification completed successfully.');
+}
+
+process.exit(0);
