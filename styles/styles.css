@@ -233,3 +233,31 @@ footer .tagline {
     font-size: 1rem;
   }
 }
+
+/* Navbar styling */
+.navbar {
+  background: #7c0e0c;
+  padding: 1rem;
+  text-align: center;
+}
+
+.navbar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.navbar a {
+  color: #fdf6f2;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.navbar a:hover {
+  color: #ffd9a0;
+}
+
