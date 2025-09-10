@@ -19,11 +19,14 @@ jobs:
         with:
           node-version: 22
 
+      - name: Install dependencies
+        run: npm install
+
       - name: Run verifier
-        shell: bash
-        run: |
-          bash -c "node scripts/verify-includes.js || true"
-          echo "✅ HTML include and link verification complete"
+        run: node scripts/verify-includes.js || true
+
+      - name: Run Playwright tests
+        run: npx playwright test --reporter=dot
 
       - name: Upload reports
         if: always()

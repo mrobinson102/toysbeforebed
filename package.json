@@ -1,0 +1,27 @@
+{
+  "name": "toys-before-bed",
+  "version": "1.0.0",
+  "description": "Elegant, gender‑neutral adult toy storefront built with HTML, CSS, and JS.  \r Deployed via **GitHub Pages** at: [https://toysbeforebed.com](https://toysbeforebed.com)",
+  "main": "chat.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrobinson102/toysbeforebed.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mrobinson102/toysbeforebed/issues"
+  },
+  "homepage": "https://github.com/mrobinson102/toysbeforebed#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.55.0"
+  },
+  "dependencies": {
+    "playwright": "^1.55.0",
+    "playwright-core": "^1.55.0"
+  }
+}
