@@ -67,3 +67,18 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch(err => console.error("Footer load error:", err));
 });
+
+// ------------------------------
+// Show test banner only on local/preview
+// ------------------------------
+document.addEventListener("DOMContentLoaded", () => {
+  const banner = document.getElementById("test-banner");
+  if (banner) {
+    const host = window.location.hostname;
+    // Show banner if not on production domain
+    if (host !== "toysbeforebed.com") {
+      banner.textContent = "⚠️ This site is in testing mode. Forms are disabled.";
+      banner.classList.add("active");
+    }
+  }
+});
