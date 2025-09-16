@@ -22,7 +22,7 @@ jobs:
       - name: Run verifier
         run: |
           npm install
-          node scripts/verify-includes.js || true
+          node scripts/verify-includes.js
           echo "✅ HTML include and link verification complete"
 
       - name: Upload reports
@@ -31,5 +31,9 @@ jobs:
         with:
           name: verify-reports
           path: |
-            verify-report.txt
+            verify-report*.txt
             broken-links.txt
+
+      - name: Cleanup reports
+        if: always()
+        run: rm -f verify-report*.txt broken-links.txt
