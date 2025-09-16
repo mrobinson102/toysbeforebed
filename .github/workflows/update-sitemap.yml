@@ -1,6 +1,9 @@
 name: Auto Update Sitemap
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     - cron: "0 3 * * *"   # runs daily at 3 AM UTC
   workflow_dispatch:       # allows manual run from Actions tab
@@ -23,11 +26,17 @@ jobs:
       - name: Generate sitemap
         run: |
           node scripts/sitemap-generator.js
+          echo "✅ sitemap.xml and sitemap.html regenerated"
 
       - name: Commit & push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add sitemap.xml sitemap.html
-          git commit -m "🤖 Auto-update sitemap [skip ci]" || echo "No changes to commit"
+          git commit -m "🤖 Auto-update sitemap (XML + HTML) [skip ci]" || echo "No changes to commit"
           git push origin main
+
+      - name: Inject breadcrumbs
+        run: |
+          node scripts/inject-breadcrumbs.js
+
