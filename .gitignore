@@ -37,3 +37,7 @@ build/
 # Verifier reports
 broken-links.txt
 verify-report.txt
+
+# Verifier reports
+verify-report.txt
+broken-links.txt
