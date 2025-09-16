@@ -1,46 +1,97 @@
-name: Verify and Fix HTML
+const fs = require("fs");
+const path = require("path");
 
-on:
-  pull_request:
-  push:
-    branches:
-      - main
+let report = [];
+let fixed = [];
+let brokenLinks = [];
 
-jobs:
-  verify:
-    runs-on: ubuntu-latest
+function fileExists(relPath) {
+  return fs.existsSync(path.join(".", relPath));
+}
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: true
+function fixFile(filePath, depth) {
+  let html = fs.readFileSync(filePath, "utf8");
+  const rel = depth === 0 ? "" : "../";
+  let changed = false;
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
+  if (!html.includes('<div id="navbar"></div>')) {
+    html = html.replace(/<body[^>]*>/, m => `${m}\n<div id="navbar"></div>`);
+    changed = true;
+  }
 
-      - name: Run verifier
-        run: |
-          npm install
-          node scripts/verify-includes.js
-          echo "✅ HTML include and link verification complete"
+  if (!html.includes('<div id="footer"></div>')) {
+    html = html.replace(/<\/body>/, `<div id="footer"></div>\n</body>`);
+    changed = true;
+  }
 
-      - name: Upload reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: verify-reports
-          path: |
-            verify-report*.txt
-            broken-links.txt
+  if (!html.includes(`<script src="${rel}scripts/include.js" defer></script>`)) {
+    html = html.replace(/<\/body>/, `<script src="${rel}scripts/include.js" defer></script>\n</body>`);
+    changed = true;
+  }
 
-      - name: Auto-commit fixes
-        if: success()
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "chore: auto-fix HTML includes and links" || echo "No changes to commit"
-          git push
+  if (!html.includes(`<link href="${rel}styles/styles.css" rel="stylesheet">`)) {
+    html = html.replace(/<head[^>]*>/, m => `${m}\n<link href="${rel}styles/styles.css" rel="stylesheet">`);
+    changed = true;
+  }
+
+  if (changed) {
+    fs.writeFileSync(filePath, html, "utf8");
+    fixed.push(filePath);
+  }
+}
+
+function checkLinks(filePath, html, depth) {
+  const regex = /<a\s+[^>]*href=["']([^"']+)["']/gi;
+  let match;
+  while ((match = regex.exec(html))) {
+    const href = match[1];
+    if (href.startsWith("http") || href.startsWith("#")) continue; // skip external/anchors
+    let relPath;
+    if (href.startsWith("/")) {
+      relPath = href.slice(1);
+    } else {
+      relPath = depth === 0 ? href : path.join("..", href);
+    }
+    if (!fileExists(relPath)) {
+      brokenLinks.push(`${filePath}: Broken link → ${href}`);
+    }
+  }
+}
+
+function checkFile(filePath, depth) {
+  const html = fs.readFileSync(filePath, "utf8");
+  const rel = depth === 0 ? "" : "../";
+  let status = "[PASS]";
+
+  if (!html.includes('<div id="navbar"></div>') ||
+      !html.includes('<div id="footer"></div>') ||
+      !html.includes(`<script src="${rel}scripts/include.js" defer></script>`) ||
+      !html.includes(`<link href="${rel}styles/styles.css" rel="stylesheet">`)) {
+    status = "[FIXED]";
+    fixFile(filePath, depth);
+  }
+
+  checkLinks(filePath, html, depth);
+  report.push(`${status} ${filePath}`);
+}
+
+function walk(dir, depth = 0) {
+  fs.readdirSync(dir).forEach(file => {
+    const filepath = path.join(dir, file);
+    const stat = fs.statSync(filepath);
+    if (stat.isDirectory()) {
+      walk(filepath, depth + 1);
+    } else if (file.endsWith(".html")) {
+      checkFile(filepath, depth);
+    }
+  });
+}
+
+walk(".");
+fs.writeFileSync("verify-report.txt", report.join("\n"), "utf8");
+fs.writeFileSync("broken-links.txt", brokenLinks.join("\n"), "utf8");
+
+console.log(report.join("\n"));
+if (fixed.length > 0) console.log("Auto-fixed files:", fixed);
+if (brokenLinks.length > 0) console.log("Broken links found:", brokenLinks);
+
