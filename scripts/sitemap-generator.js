@@ -1,67 +1,34 @@
 const fs = require("fs");
 const path = require("path");
 
-const baseUrl = "https://toysbeforebed.com";
-const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+const baseUrl = "https://toysbeforebed.com"; // ✅ your live domain
 
-function walk(dir, fileList = []) {
+function generateSitemap(dir, depth = 0) {
+  let urls = [];
+
   fs.readdirSync(dir).forEach(file => {
-    const filePath = path.join(dir, file);
-    const stat = fs.statSync(filePath);
+    const filepath = path.join(dir, file);
+    const stat = fs.statSync(filepath);
 
     if (stat.isDirectory()) {
-      fileList = walk(filePath, fileList);
+      urls = urls.concat(generateSitemap(filepath, depth + 1));
     } else if (file.endsWith(".html")) {
-      fileList.push(filePath.replace(/\\/g, "/")); // normalize Windows paths
+      const relativePath = path.relative(".", filepath).replace(/\\/g, "/");
+      urls.push(`
+  <url>
+    <loc>${baseUrl}/${relativePath}</loc>
+    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>
+  </url>`);
     }
   });
-  return fileList;
+
+  return urls;
 }
 
-// Collect all HTML files except includes
-let pages = walk(".").filter(f => !f.startsWith("includes/"));
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${generateSitemap(".").join("\n")}
+</urlset>`;
 
-// Build sitemap.xml
-let xml =
-  '<?xml version="1.0" encoding="UTF-8"?>\n' +
-  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
-
-pages.forEach(p => {
-  const url = p === "index.html" ? `${baseUrl}/` : `${baseUrl}/${p}`;
-  xml += `  <url><loc>${url}</loc><lastmod>${today}</lastmod></url>\n`;
-});
-
-xml += "</urlset>\n";
-
-// Build sitemap.html
-let html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Sitemap</title>
-  <link href="styles/styles.css" rel="stylesheet">
-</head>
-<body>
-  <div id="navbar"></div>
-  <main class="page">
-    <h1>Sitemap</h1>
-    <ul>
-`;
-
-pages.forEach(p => {
-  const url = p === "index.html" ? "index.html" : p;
-  html += `      <li><a href="${url}">${url}</a></li>\n`;
-});
-
-html += `    </ul>
-  </main>
-  <div id="footer"></div>
-  <script src="scripts/include.js" defer></script>
-</body>
-</html>`;
-
-// Write files
-fs.writeFileSync("sitemap.xml", xml, "utf8");
-fs.writeFileSync("sitemap.html", html, "utf8");
-
-console.log("✅ sitemap.xml and sitemap.html regenerated with lastmod =", today);
+fs.writeFileSync("sitemap.xml", sitemap, "utf8");
+console.log("✅ Sitemap updated with absolute URLs!");
