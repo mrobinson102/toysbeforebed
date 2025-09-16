@@ -1,8 +1,35 @@
+# Project .gitignore
+# OS-specific
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories
 node_modules/
-__pycache__/
+bower_components/
+
+# Build output
+dist/
+build/
+
+# R-related
+.Rhistory
+.RData
+.Rproj.user/
+
+# IDE/editor
 .vscode/
 .idea/
-verify-report.txt
-broken-links.txt
+*.swp
+*~
+
+# GitHub Actions temp files
+*.lock
+
+# Misc
+.env
