@@ -1,72 +1,67 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-const rootDir = path.resolve(__dirname, '..');
+const baseUrl = "https://toysbeforebed.com";
+const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
-function getHtmlFiles(dir) {
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-  let files = [];
-  for (const entry of entries) {
-    const res = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      if (['node_modules', '.git', 'includes', 'scripts'].includes(entry.name)) {
-        continue;
-      }
-      files = files.concat(getHtmlFiles(res));
-    } else if (entry.isFile() && entry.name.endsWith('.html')) {
-      files.push(path.relative(rootDir, res));
+function walk(dir, fileList = []) {
+  fs.readdirSync(dir).forEach(file => {
+    const filePath = path.join(dir, file);
+    const stat = fs.statSync(filePath);
+
+    if (stat.isDirectory()) {
+      fileList = walk(filePath, fileList);
+    } else if (file.endsWith(".html")) {
+      fileList.push(filePath.replace(/\\/g, "/")); // normalize Windows paths
     }
-  }
-  return files;
+  });
+  return fileList;
 }
 
-const htmlFiles = getHtmlFiles(rootDir).sort();
+// Collect all HTML files except includes
+let pages = walk(".").filter(f => !f.startsWith("includes/"));
 
-const noBreadcrumbs = ['sitemap.html', 'thank-you.html'];
+// Build sitemap.xml
+let xml =
+  '<?xml version="1.0" encoding="UTF-8"?>\n' +
+  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 
-const listItems = htmlFiles
-  .map(file => {
-    const relPath = file.replace(/\\/g, '/');
-    const fileName = path.basename(file);
-    const breadcrumbAttr = noBreadcrumbs.includes(fileName)
-      ? ' data-breadcrumbs="false"'
-      : '';
-    return `      <li><a href="${relPath}"${breadcrumbAttr}>${relPath}</a></li>`;
-  })
-  .join('\n');
+pages.forEach(p => {
+  const url = p === "index.html" ? `${baseUrl}/` : `${baseUrl}/${p}`;
+  xml += `  <url><loc>${url}</loc><lastmod>${today}</lastmod></url>\n`;
+});
 
-const sitemapHtml = `<!DOCTYPE html>
+xml += "</urlset>\n";
+
+// Build sitemap.html
+let html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sitemap | Toys Before Bed™</title>
+  <title>Sitemap</title>
   <link href="styles/styles.css" rel="stylesheet">
 </head>
-<body id="top">
+<body>
   <div id="navbar"></div>
-  <main class="container">
+  <main class="page">
     <h1>Sitemap</h1>
     <ul>
-${listItems}
-    </ul>
+`;
+
+pages.forEach(p => {
+  const url = p === "index.html" ? "index.html" : p;
+  html += `      <li><a href="${url}">${url}</a></li>\n`;
+});
+
+html += `    </ul>
   </main>
   <div id="footer"></div>
   <script src="scripts/include.js" defer></script>
 </body>
-</html>
-`;
+</html>`;
 
-fs.writeFileSync(path.join(rootDir, 'sitemap.html'), sitemapHtml, 'utf-8');
+// Write files
+fs.writeFileSync("sitemap.xml", xml, "utf8");
+fs.writeFileSync("sitemap.html", html, "utf8");
 
-const today = new Date().toISOString().split('T')[0];
-let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
-xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
-htmlFiles.forEach(file => {
-  const relPath = file.replace(/\\/g, '/');
-  xml += `  <url>\n    <loc>${relPath}</loc>\n    <lastmod>${today}</lastmod>\n  </url>\n`;
-});
-xml += '</urlset>\n';
-fs.writeFileSync(path.join(rootDir, 'sitemap.xml'), xml, 'utf-8');
-
-console.log('sitemap.html and sitemap.xml generated.');
+console.log("✅ sitemap.xml and sitemap.html regenerated with lastmod =", today);
