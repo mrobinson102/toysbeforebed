@@ -11,9 +11,10 @@ git checkout main || exit 1
 
 # Stage & commit local changes (if any)
 if ! git diff --quiet || ! git diff --cached --quiet; then
-  echo "📦 Local changes detected, committing..."
+  TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+  echo "📦 Local changes detected, committing with timestamp..."
   git add .
-  git commit -m "Auto-sync local changes before pulling"
+  git commit -m "Auto-sync on $TIMESTAMP"
   git push origin main
 else
   echo "✅ No local changes to commit."
