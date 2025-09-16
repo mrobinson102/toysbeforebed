@@ -33,3 +33,7 @@ build/
 
 # Misc
 .env
+
+# Verifier reports
+broken-links.txt
+verify-report.txt
