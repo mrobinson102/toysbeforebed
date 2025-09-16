@@ -3,38 +3,47 @@ const path = require("path");
 
 const baseUrl = "https://toysbeforebed.com";
 
-// folders/files to exclude
-const excludeDirs = ["node_modules", "includes", ".github"];
-const excludeFiles = ["404.html"];
+function getPriority(file) {
+  if (file === "index.html") return { priority: "1.0", changefreq: "daily" };
+  if (file.startsWith("products/") || file.startsWith("blog/")) {
+    return { priority: "0.8", changefreq: "weekly" };
+  }
+  return { priority: "0.5", changefreq: "monthly" };
+}
 
-function generateSitemap(dir) {
-  let urls = [];
-
+function walk(dir, filelist = []) {
   fs.readdirSync(dir).forEach(file => {
     const filepath = path.join(dir, file);
     const stat = fs.statSync(filepath);
 
     if (stat.isDirectory()) {
-      if (!excludeDirs.includes(file)) {
-        urls = urls.concat(generateSitemap(filepath));
-      }
-    } else if (file.endsWith(".html") && !excludeFiles.includes(file)) {
-      const relativePath = path.relative(".", filepath).replace(/\\/g, "/");
-      urls.push(`
-  <url>
-    <loc>${baseUrl}/${relativePath}</loc>
-    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>
-  </url>`);
+      walk(filepath, filelist);
+    } else if (file.endsWith(".html")) {
+      filelist.push(filepath.replace(/\\/g, "/"));
     }
   });
-
-  return urls;
+  return filelist;
 }
 
-const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${generateSitemap(".").join("\n")}
-</urlset>`;
+const files = walk(".").filter(f => !f.includes("includes/") && !f.includes("node_modules/"));
+const today = new Date().toISOString().split("T")[0];
 
-fs.writeFileSync("sitemap.xml", sitemap, "utf8");
-console.log("✅ Sitemap updated without includes/ and node_modules/");
+let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+files.forEach(file => {
+  const loc = `${baseUrl}/${file.replace("./", "")}`;
+  const { priority, changefreq } = getPriority(file);
+
+  xml += `  <url>\n`;
+  xml += `    <loc>${loc}</loc>\n`;
+  xml += `    <lastmod>${today}</lastmod>\n`;
+  xml += `    <changefreq>${changefreq}</changefreq>\n`;
+  xml += `    <priority>${priority}</priority>\n`;
+  xml += `  </url>\n`;
+});
+
+xml += `</urlset>\n`;
+
+fs.writeFileSync("sitemap.xml", xml, "utf8");
+console.log("✅ sitemap.xml generated with SEO priorities");
