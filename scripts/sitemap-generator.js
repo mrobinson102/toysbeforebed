@@ -1,9 +1,13 @@
 const fs = require("fs");
 const path = require("path");
 
-const baseUrl = "https://toysbeforebed.com"; // ✅ your live domain
+const baseUrl = "https://toysbeforebed.com";
 
-function generateSitemap(dir, depth = 0) {
+// folders/files to exclude
+const excludeDirs = ["node_modules", "includes", ".github"];
+const excludeFiles = ["404.html"];
+
+function generateSitemap(dir) {
   let urls = [];
 
   fs.readdirSync(dir).forEach(file => {
@@ -11,8 +15,10 @@ function generateSitemap(dir, depth = 0) {
     const stat = fs.statSync(filepath);
 
     if (stat.isDirectory()) {
-      urls = urls.concat(generateSitemap(filepath, depth + 1));
-    } else if (file.endsWith(".html")) {
+      if (!excludeDirs.includes(file)) {
+        urls = urls.concat(generateSitemap(filepath));
+      }
+    } else if (file.endsWith(".html") && !excludeFiles.includes(file)) {
       const relativePath = path.relative(".", filepath).replace(/\\/g, "/");
       urls.push(`
   <url>
@@ -31,4 +37,4 @@ ${generateSitemap(".").join("\n")}
 </urlset>`;
 
 fs.writeFileSync("sitemap.xml", sitemap, "utf8");
-console.log("✅ Sitemap updated with absolute URLs!");
+console.log("✅ Sitemap updated without includes/ and node_modules/");

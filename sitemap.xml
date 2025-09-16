@@ -62,47 +62,12 @@
   </url>
 
   <url>
-    <loc>https://toysbeforebed.com/includes/footer.html</loc>
-    <lastmod>2025-09-16</lastmod>
-  </url>
-
-  <url>
-    <loc>https://toysbeforebed.com/includes/navbar.html</loc>
-    <lastmod>2025-09-16</lastmod>
-  </url>
-
-  <url>
     <loc>https://toysbeforebed.com/index.html</loc>
     <lastmod>2025-09-16</lastmod>
   </url>
 
   <url>
     <loc>https://toysbeforebed.com/join.html</loc>
-    <lastmod>2025-09-16</lastmod>
-  </url>
-
-  <url>
-    <loc>https://toysbeforebed.com/node_modules/playwright-core/lib/vite/htmlReport/index.html</loc>
-    <lastmod>2025-09-16</lastmod>
-  </url>
-
-  <url>
-    <loc>https://toysbeforebed.com/node_modules/playwright-core/lib/vite/recorder/index.html</loc>
-    <lastmod>2025-09-16</lastmod>
-  </url>
-
-  <url>
-    <loc>https://toysbeforebed.com/node_modules/playwright-core/lib/vite/traceViewer/index.html</loc>
-    <lastmod>2025-09-16</lastmod>
-  </url>
-
-  <url>
-    <loc>https://toysbeforebed.com/node_modules/playwright-core/lib/vite/traceViewer/snapshot.html</loc>
-    <lastmod>2025-09-16</lastmod>
-  </url>
-
-  <url>
-    <loc>https://toysbeforebed.com/node_modules/playwright-core/lib/vite/traceViewer/uiMode.html</loc>
     <lastmod>2025-09-16</lastmod>
   </url>
 
