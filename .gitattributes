@@ -1,2 +1,5 @@
 sync.sh merge=ours
 * text=auto eol=lf
+
+# Always keep local sync.sh, ignore remote changes
+sync.sh merge=ours
