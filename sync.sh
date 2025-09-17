@@ -65,3 +65,4 @@ git config core.autocrlf true
 git add --renormalize .
 echo "✅ Normalized line endings to Windows-friendly CRLF"
 
+# REMOTE CHANGE SIMULATION
