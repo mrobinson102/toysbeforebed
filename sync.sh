@@ -72,13 +72,31 @@ if ! git diff --cached --quiet; then
   if [[ "$confirm" =~ ^[Yy]$ ]]; then
     git push origin main | tee -a "$LOGFILE"
     echo "🚀 Pushed sitemap + breadcrumb updates to GitHub" | tee -a "$LOGFILE"
+    PUSHED="yes"
   else
     echo "❌ Skipped pushing changes" | tee -a "$LOGFILE"
+    PUSHED="no"
   fi
 else
   echo "ℹ️ No sitemap or breadcrumb changes to commit" | tee -a "$LOGFILE"
+  PUSHED="no"
 fi
 
-echo "🕒 Sync run finished at $(date +"%Y-%m-%d %H:%M:%S")" | tee -a "$LOGFILE"
+ENDTIME=$(date +"%Y-%m-%d %H:%M:%S")
+echo "🕒 Sync run finished at $ENDTIME" | tee -a "$LOGFILE"
 echo "----------------------------------------" | tee -a "$LOGFILE"
-echo "ℹ️ Logs (sync.log + rotated copies) are kept locally and ignored in Git" | tee -a "$LOGFILE"
+
+# === Terminal summary ===
+echo ""
+echo "========================================"
+echo "✅ Sync finished successfully"
+if [ -s broken-links.txt ]; then
+  echo "⚠️  Broken links were found — check broken-links.txt"
+fi
+if [[ "$PUSHED" == "yes" ]]; then
+  echo "🚀 Changes were pushed to GitHub"
+else
+  echo "ℹ️ No changes pushed"
+fi
+echo "📜 Full log saved to $LOGFILE"
+echo "========================================"
