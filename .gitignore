@@ -58,3 +58,12 @@ yarn-error.log*
 # Ignore verifier reports
 verify-report.txt
 broken-links.txt
+
+# Sync logs (only keep local, not in repo)
+sync.log
+sync-*.log
+
+
+# Sync logs
+sync.log
+sync-*.log
