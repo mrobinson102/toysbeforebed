@@ -11,6 +11,9 @@ if [ -f "$LOGFILE" ] && [ $(stat -c%s "$LOGFILE") -gt $MAXSIZE ]; then
   echo "🌀 Rotated old log → $ARCHIVE"
 fi
 
+# Cleanup rotated logs older than 7 days
+find . -maxdepth 1 -name "sync-*.log" -type f -mtime +7 -exec rm {} \; -exec echo "🧹 Removed old log {}" \;
+
 TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
 
 echo "----------------------------------------" | tee -a "$LOGFILE"
@@ -78,4 +81,4 @@ fi
 
 echo "🕒 Sync run finished at $(date +"%Y-%m-%d %H:%M:%S")" | tee -a "$LOGFILE"
 echo "----------------------------------------" | tee -a "$LOGFILE"
-echo "ℹ️ Logs (sync.log + rotated copies) are kept locally and ignored in Git"
+echo "ℹ️ Logs (sync.log + rotated copies) are kept locally and ignored in Git" | tee -a "$LOGFILE"
