@@ -91,7 +91,9 @@ echo ""
 echo "========================================"
 echo "✅ Sync finished successfully"
 if [ -s broken-links.txt ]; then
-  echo "⚠️  Broken links were found — check broken-links.txt"
+  echo "⚠️  Broken links were found — opening broken-links.txt..."
+  sleep 2
+  nano broken-links.txt
 fi
 if [[ "$PUSHED" == "yes" ]]; then
   echo "🚀 Changes were pushed to GitHub"
