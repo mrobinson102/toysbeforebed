@@ -34,8 +34,12 @@ fi
 
 echo "✅ Sitemap + breadcrumbs updated locally"
 
-# Stage only sitemap + HTML files (ignore reports)
-git add sitemap.xml sitemap.html *.html bedside/*.html blog/*.html products/*.html
+# Stage only HTML + sitemap files (ignore reports)
+git add sitemap.xml sitemap.html
+git add *.html bedside/*.html blog/*.html products/*.html || true
+
+# Ensure reports never get staged
+git reset verify-report.txt broken-links.txt 2>/dev/null || true
 
 # Commit only if changes exist
 if ! git diff --cached --quiet; then
@@ -55,14 +59,3 @@ if ! git diff --cached --quiet; then
 else
   echo "ℹ️ No sitemap or breadcrumb changes to commit"
 fi
-
-# 🔹 Cleanup: remove report files if they exist
-rm -f verify-report.txt broken-links.txt
-echo "🧹 Cleaned up temporary report files"
-
-# 🔹 Normalize line endings (fix LF vs CRLF warnings)
-git config core.autocrlf true
-git add --renormalize .
-echo "✅ Normalized line endings to Windows-friendly CRLF"
-
-# REMOTE CHANGE SIMULATION
