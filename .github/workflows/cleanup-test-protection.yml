@@ -10,11 +10,12 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Remove test-protection workflow
+      - name: Remove test workflows
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           rm -f .github/workflows/test-protection.yml
-          git add .github/workflows/test-protection.yml || true
-          git commit -m "Cleanup: remove test-protection workflow" || echo "No changes to commit"
+          rm -f .github/workflows/cleanup-test-protection.yml
+          git add .github/workflows/test-protection.yml .github/workflows/cleanup-test-protection.yml || true
+          git commit -m "Cleanup: remove protection test workflows" || echo "No changes to commit"
           git push origin main
