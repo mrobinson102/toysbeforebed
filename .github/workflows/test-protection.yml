@@ -1,0 +1,15 @@
+name: Test Branch Protection
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  fail-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Force fail check
+        run: |
+          echo "❌ This job is designed to fail to confirm branch protection."
+          exit 1
